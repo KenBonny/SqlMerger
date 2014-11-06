@@ -87,7 +87,7 @@ namespace SqlMerger
                 txtTargetFile.Text = fileDialog.FileName;
         }
 
-        private async void btnMerge_Click(object sender, EventArgs e)
+        private void btnMerge_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtTargetFile.Text))
                 return;
@@ -103,7 +103,7 @@ namespace SqlMerger
 
                 using (var writer = new StreamWriter(target.FullName, chkAppend.Checked))
                 {
-                    await writer.WriteAsync(merged);
+                    writer.Write(merged);
                 }
             }
             finally

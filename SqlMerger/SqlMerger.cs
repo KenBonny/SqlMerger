@@ -37,10 +37,10 @@ namespace SqlMerger
             {
                 using (var reader = file.OpenText())
                 {
-                    var sql = reader.ReadToEndAsync();
+                    var sql = reader.ReadToEnd();
                     merged.AppendLine(new string('-', file.Name.Count() + 3));
                     merged.AppendLine(string.Format("-- {0}", file.Name));
-                    merged.Append(sql.Result);
+                    merged.Append(sql);
                 }
                 if (_addGo)
                     merged.AppendLine("GO");
