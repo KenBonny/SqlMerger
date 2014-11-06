@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSqlMerger));
             this.txtSourceDirectory = new System.Windows.Forms.TextBox();
             this.lblSourceDirectory = new System.Windows.Forms.Label();
             this.btnBrowseSource = new System.Windows.Forms.Button();
@@ -39,6 +40,7 @@
             this.txtTargetFile = new System.Windows.Forms.TextBox();
             this.btnBrowseTargetFile = new System.Windows.Forms.Button();
             this.btnMerge = new System.Windows.Forms.Button();
+            this.chkAppend = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // txtSourceDirectory
@@ -74,6 +76,8 @@
             // chkRemoveUse
             // 
             this.chkRemoveUse.AutoSize = true;
+            this.chkRemoveUse.Checked = true;
+            this.chkRemoveUse.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkRemoveUse.Location = new System.Drawing.Point(12, 61);
             this.chkRemoveUse.Name = "chkRemoveUse";
             this.chkRemoveUse.Size = new System.Drawing.Size(200, 21);
@@ -84,6 +88,8 @@
             // chkAddGo
             // 
             this.chkAddGo.AutoSize = true;
+            this.chkAddGo.Checked = true;
+            this.chkAddGo.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkAddGo.Location = new System.Drawing.Point(219, 62);
             this.chkAddGo.Name = "chkAddGo";
             this.chkAddGo.Size = new System.Drawing.Size(183, 21);
@@ -96,18 +102,18 @@
             this.txtFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtFiles.Location = new System.Drawing.Point(12, 188);
+            this.txtFiles.Location = new System.Drawing.Point(12, 214);
             this.txtFiles.Multiline = true;
             this.txtFiles.Name = "txtFiles";
             this.txtFiles.ReadOnly = true;
             this.txtFiles.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtFiles.Size = new System.Drawing.Size(608, 154);
+            this.txtFiles.Size = new System.Drawing.Size(608, 140);
             this.txtFiles.TabIndex = 5;
             // 
             // lblFiles
             // 
             this.lblFiles.AutoSize = true;
-            this.lblFiles.Location = new System.Drawing.Point(12, 168);
+            this.lblFiles.Location = new System.Drawing.Point(11, 194);
             this.lblFiles.Name = "lblFiles";
             this.lblFiles.Size = new System.Drawing.Size(37, 17);
             this.lblFiles.TabIndex = 6;
@@ -144,18 +150,33 @@
             // 
             // btnMerge
             // 
-            this.btnMerge.Location = new System.Drawing.Point(13, 135);
+            this.btnMerge.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnMerge.Enabled = false;
+            this.btnMerge.Location = new System.Drawing.Point(12, 161);
             this.btnMerge.Name = "btnMerge";
             this.btnMerge.Size = new System.Drawing.Size(608, 30);
             this.btnMerge.TabIndex = 10;
             this.btnMerge.Text = "Merge";
             this.btnMerge.UseVisualStyleBackColor = true;
+            this.btnMerge.Click += new System.EventHandler(this.btnMerge_Click);
+            // 
+            // chkAppend
+            // 
+            this.chkAppend.AutoSize = true;
+            this.chkAppend.Location = new System.Drawing.Point(12, 134);
+            this.chkAppend.Name = "chkAppend";
+            this.chkAppend.Size = new System.Drawing.Size(450, 21);
+            this.chkAppend.TabIndex = 11;
+            this.chkAppend.Text = "Append sql to existing file (leave blank to overwrite the existing file)";
+            this.chkAppend.UseVisualStyleBackColor = true;
             // 
             // FormSqlMerger
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(632, 354);
+            this.ClientSize = new System.Drawing.Size(632, 366);
+            this.Controls.Add(this.chkAppend);
             this.Controls.Add(this.btnMerge);
             this.Controls.Add(this.btnBrowseTargetFile);
             this.Controls.Add(this.txtTargetFile);
@@ -167,8 +188,10 @@
             this.Controls.Add(this.btnBrowseSource);
             this.Controls.Add(this.lblSourceDirectory);
             this.Controls.Add(this.txtSourceDirectory);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormSqlMerger";
             this.Text = "Sql Merger";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormSqlMerger_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -187,6 +210,7 @@
         private System.Windows.Forms.TextBox txtTargetFile;
         private System.Windows.Forms.Button btnBrowseTargetFile;
         private System.Windows.Forms.Button btnMerge;
+        private System.Windows.Forms.CheckBox chkAppend;
     }
 }
 

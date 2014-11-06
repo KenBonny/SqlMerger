@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using SqlMerger.Properties;
 
 namespace SqlMerger
 {
@@ -16,8 +14,19 @@ namespace SqlMerger
         public FormSqlMerger()
         {
             InitializeComponent();
+            chkAddGo.Checked = Settings.Default.AddGo;
+            chkRemoveUse.Checked = Settings.Default.RemoveUse;
+            txtSourceDirectory.Text = Settings.Default.Source;
         }
 
+        private void FormSqlMerger_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Settings.Default.AddGo = chkAddGo.Checked;
+            Settings.Default.RemoveUse = chkRemoveUse.Checked;
+            Settings.Default.Source = txtSourceDirectory.Text;
+            Settings.Default.Save();
+        }
+        
         private void btnBrowseSource_Click(object sender, EventArgs e)
         {
             var folders = new FolderBrowserDialog()
@@ -33,16 +42,23 @@ namespace SqlMerger
 
         private void txtSourceDirectory_TextChanged(object sender, EventArgs e)
         {
+            // reset controls
+            btnMerge.Enabled = false;
+            txtFiles.Text = string.Empty;
+            txtFiles.Update();
+
+            // check directory
             var directory = new DirectoryInfo(txtSourceDirectory.Text);
             txtSourceDirectory.BackColor = directory.Exists ? SystemColors.Window : Color.LightPink;
             if (!directory.Exists)
                 return;
 
-            // display the sql files in the folder
-            var writer = new StringWriter();
+            // list the sql files in the folder
+            var writer = new StringBuilder();
             foreach (var file in directory.GetFiles("*.sql").OrderBy(f => f.Name))
             {
-                writer.WriteLine("- {0}", file.Name);
+                btnMerge.Enabled = true;
+                writer.AppendFormat("- {0}{1}", file.Name, Environment.NewLine);
             }
             txtFiles.AppendText(writer.ToString());
         }
@@ -64,12 +80,37 @@ namespace SqlMerger
                 CheckPathExists = true,
                 InitialDirectory = dir,
                 Filter = @"SQL|*.sql",
-                OverwritePrompt = true,
+                OverwritePrompt = false,
                 Title = @"Select Target File"
             };
             var result = fileDialog.ShowDialog();
             if (result == DialogResult.OK)
                 txtTargetFile.Text = fileDialog.FileName;
+        }
+
+        private async void btnMerge_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtTargetFile.Text))
+                return;
+
+            Cursor.Current = Cursors.WaitCursor;
+            try
+            {
+                var source = new DirectoryInfo(txtSourceDirectory.Text);
+                var target = new FileInfo(txtTargetFile.Text);
+
+                var merger = new SqlMerger(chkRemoveUse.Checked, chkAddGo.Checked);
+                var merged = merger.Merge(source, target.Name);
+
+                using (var writer = new StreamWriter(target.FullName, chkAppend.Checked))
+                {
+                    await writer.WriteAsync(merged);
+                }
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+            }
         }
     }
 }
